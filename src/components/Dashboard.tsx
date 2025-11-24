@@ -1,14 +1,43 @@
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapView } from "./MapView";
 import { ConvoyList } from "./ConvoyList";
 import { RouteOptimizer } from "./RouteOptimizer";
 import { AlertsPanel } from "./AlertsPanel";
 import { AnalyticsDashboard } from "./AnalyticsDashboard";
-import { Activity, Map, Route, AlertTriangle, BarChart3 } from "lucide-react";
+import { Activity, Map, Route, AlertTriangle, BarChart3, Moon, Sun } from "lucide-react";
 
 export const Dashboard = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  // Initialize theme from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    
+    if (newTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -20,7 +49,7 @@ export const Dashboard = () => {
                 <Activity className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">R2D32</h1>
+                <h1 className="text-2xl font-bold text-foreground">MISSION PLANNER</h1>
                 <p className="text-sm text-muted-foreground">AI Military Mobility System</p>
               </div>
             </div>
@@ -29,6 +58,19 @@ export const Dashboard = () => {
                 <div className="h-2 w-2 rounded-full bg-success mr-2 animate-pulse" />
                 System Online
               </Badge>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTheme}
+                className="h-9 w-9"
+              >
+                {isDark ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+                <span className="sr-only">Toggle theme</span>
+              </Button>
             </div>
           </div>
         </div>
